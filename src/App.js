@@ -1,5 +1,8 @@
 import './App.css';
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import jsondata from './assets/data.json';
 
 function App() {
@@ -9,6 +12,18 @@ function App() {
 
   // onko maan valinta tehty ja taulukko näytetään
   const [valmis, setValmis] = useState(false);
+
+  // taulukon sarakkeet
+  const columns = [
+    { headerName: "Nimi", field: "nimi"},
+    { headerName: "Pääkaupunki", field: "paakaupunki" },
+    { headerName: "Itsenäinen", field: "itsenainen" },
+    { headerName: "YK:n jäsen", field: "yk" },
+    { headerName: "Lippu", field: "lippu" }
+  ];
+  
+  // array taulukolle
+  let rowdata = [];
   
   // haetaan kaikki tiedot
   const haeData = () => {
@@ -49,11 +64,13 @@ function App() {
   let handleChange = (e) => {  
     //console.log("e.target.value on " + e.target.value);
     setHaettumaa(maat[e.target.value]);      
-    setValmis(true);
+    setValmis(true);  
   }  
+
+  rowdata.push(haettumaa);
    
   return (
-    <div className="App" style={{ padding: "10px" }}>   
+    <div className="App" style={{ padding: "20px" }}>   
       
     <select onChange={handleChange}> 
       <option value="Valitse maa"> Valitse maa </option>        
@@ -65,18 +82,12 @@ function App() {
 
       {valmis ?   
         
-        <table align="center">
-          <tbody>
-            <tr><th>Nimi</th><th>Pääkaupunki</th><th>Itsenäinen</th><th>YK:n jäsen</th><th>Lippu</th></tr>           
-              <tr >             
-                <td>{haettumaa.nimi}</td>
-                <td>{haettumaa.paakaupunki}</td> 
-                <td>{haettumaa.itsenainen}</td> 
-                <td>{haettumaa.yk}</td> 
-                <td>{haettumaa.lippu}</td>               
-              </tr>    
-          </tbody>
-        </table>       
+        <div align="center" className="ag-theme-material" style={{ height: '600px', width: '80%', margin: 'auto' }}>
+            <AgGridReact
+                columnDefs={columns}
+                rowData={rowdata}>
+            </AgGridReact>
+        </div>
         
     : null}    
 
