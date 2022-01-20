@@ -15,13 +15,16 @@ function App() {
   const haeData = () => {
     fetch('https://restcountries.com/v3.1/all')
       .then(response => response.json())
-      .then(responsedata => setKaikki(responsedata)) // aakkosta vielä
+      .then(responsedata => setKaikki(responsedata))
       .catch(error => console.error(error))
   };
 
   //useEffect(() => haeData, []);
-  useEffect(() => setKaikki(jsondata), []); // aakkosta vielä
+  useEffect(() => setKaikki(jsondata), []);
 
+  // aakkosta maat
+  kaikki.sort((a, b) => a.name.common.localeCompare(b.name.common));
+  
   // katsotaan mitä saatiin
   console.log(JSON.stringify(kaikki));
   console.log(kaikki.length); // 250
@@ -39,43 +42,22 @@ function App() {
     )
   });   
 
-  console.log("maat: " + JSON.stringify(maat));
+  //console.log("maat: " + JSON.stringify(maat));
 
   let [haettumaa, setHaettumaa] = useState(null);
-  let [maaId, setMaaid] = useState(-1);
-  
  
-  let handleChange = (e) => {
-  
-  //console.log("target value on " + e.target.value);
-  setHaettumaa(maat[e.target.value]); 
-    
-  document.getElementById("tulos").innerHTML = 
-  "Nimi: " +
-  maat[e.target.value].nimi +
-  "Itsenäisyys: " +
-    maat[e.target.value].itsenainen;
-  
-  setValmis(true);
-
-} 
-  
-  /*function selectCountry(haettavaid) {
-
-    let haettu = maat.find(({ id }) => id === haettavaid);
-    console.log("haettu on " + JSON.stringify(haettu));
-    setHaettumaa(haettu);
-  
-  };*/
-  
+  let handleChange = (e) => {  
+    //console.log("e.target.value on " + e.target.value);
+    setHaettumaa(maat[e.target.value]);      
+    setValmis(true);
+  } 
+   
   return (
     <div className="App" style={{ padding: "10px" }}>   
       
     <select onChange={handleChange}> 
-      <option value="Valitse maa"> Valitse maa </option>
-        
+      <option value="Valitse maa"> Valitse maa </option>        
         {maat.map((maa) => <option value={maa.id}> { maa.nimi } </option>) }
-
       </select>
 
       <br />
