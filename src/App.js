@@ -75,7 +75,7 @@ function App() {
 
       {ready ?   
         
-        <div align="center" className="ag-theme-material" style={{ height: '600px', width: '80%', margin: 'auto' }}>
+        <div align="center" className="ag-theme-material" style={{ height: '200px', width: '70%', margin: 'auto' }}>
             <AgGridReact
                 columnDefs={columns}
                 rowData={rowData}>
