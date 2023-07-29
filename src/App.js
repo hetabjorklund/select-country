@@ -7,85 +7,78 @@ import jsondata from './assets/data.json';
 
 function App() {
   
-  // muuttuja kaikille haetuille tiedoille
-  const [kaikki, setKaikki] = useState([]);
+  // variable for fetched data 
+  const [all, setAll] = useState([]);
 
-  // onko maan valinta tehty ja taulukko näytetään
-  const [valmis, setValmis] = useState(false);
+  // has country been selected and table can be shown
+  const [ready, setReady] = useState(false);
 
-  // taulukon sarakkeet
+  // columns for table
   const columns = [
-    { headerName: "Nimi", field: "nimi"},
-    { headerName: "Pääkaupunki", field: "paakaupunki" },
-    { headerName: "Itsenäinen", field: "itsenainen" },
-    { headerName: "YK:n jäsen", field: "yk" },
-    { headerName: "Lippu", field: "lippu" }
+    { headerName: "Name", field: "name"},
+    { headerName: "Capital", field: "capital" },
+    { headerName: "Independent", field: "independent" },
+    { headerName: "UN member", field: "un" },
+    { headerName: "Flag", field: "flag" }
   ];
   
-  // array taulukolle
-  let rowdata = [];
+  // array for table
+  let rowData = [];
   
-  // haetaan kaikki tiedot
-  const haeData = () => {
-    fetch('https://restcountries.com/v3.1/all')
+  // fetch all data
+  const fetchData = () => {
+    fetch('https://restcountries.com/#api-endpoints-v3-all')
       .then(response => response.json())
-      .then(responsedata => setKaikki(responsedata))
+      .then(responsedata => setAll(responsedata))
       .catch(error => console.error(error))
   };
 
-  //useEffect(() => haeData, []);
-  useEffect(() => setKaikki(jsondata), []); // testausta varten, appi ei aina hakenut endpointista tietoja
+  useEffect(() => fetchData, []);
+  useEffect(() => setAll(jsondata), []); // in case fetching from API doesn't work
 
-  // aakkosta maat
-  kaikki.sort((a, b) => a.name.common.localeCompare(b.name.common));
+  // sort countries
+  all.sort((a, b) => a.name.common.localeCompare(b.name.common));
   
-  // katsotaan mitä saatiin
-  //console.log(JSON.stringify(kaikki));
-  //console.log(kaikki.length); // 250
-
-  // maaolioiden lista
-  const maat = kaikki.map((t, i) => {
+  // list of country objects
+  const countries = all.map((t, i) => {
     return (
       {
         id: i,
-        nimi: t.name.common,
-        paakaupunki: t.capital,
-        itsenainen: (t.independent === true ? "Kyllä" : "Ei"),
-        yk: (t.unMember === true ? "Kyllä" : "Ei"),
-        lippu: t.flag
+        name: t.name.common,
+        capital: t.capital,
+        independent: (t.independent === true ? "Yes" : "No"),
+        un: (t.unMember === true ? "Yes" : "No"),
+        flag: t.flag
       }
     )
   });   
 
-  //console.log("maat: " + JSON.stringify(maat));
-
-  let [haettumaa, setHaettumaa] = useState(null);
+  let [selectedCountry, setSelectedCountry] = useState(null);
  
   let handleChange = (e) => {  
-    //console.log("e.target.value on " + e.target.value);
-    setHaettumaa(maat[e.target.value]);      
-    setValmis(true);  
+    setSelectedCountry(countries[e.target.value]);      
+    setReady(true);  
   }  
 
-  rowdata.push(haettumaa);
+  rowData.push(selectedCountry);
    
   return (
     <div className="App" style={{ padding: "20px" }}>   
       
     <select onChange={handleChange}> 
-      <option value="Valitse maa"> Valitse maa </option>        
-        {maat.map((maa) => <option value={maa.id}> { maa.nimi } </option>) }
+      <option value="Select country"> Select country </option>        
+        {countries.map((country) => <option value={country.id}> { country.name } </option>) }
       </select>
 
       <br />
       <br />
 
-      {valmis ?   
+      {ready ?   
         
         <div align="center" className="ag-theme-material" style={{ height: '600px', width: '80%', margin: 'auto' }}>
             <AgGridReact
                 columnDefs={columns}
-                rowData={rowdata}>
+                rowData={rowData}>
             </AgGridReact>
         </div>
         
